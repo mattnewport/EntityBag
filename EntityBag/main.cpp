@@ -45,11 +45,8 @@ public:
                    std::tie(x.currentTypeBag, x.currentElementIndex);
         }
         bool operator!=(const iterator& x) { return !(*this == x); }
-        const EntityBase& operator*() {
-            return *currentTypeBag->second->entity(currentElementIndex);
-        }
-        const EntityBase* operator->() {
-            return &currentTypeBag->second->entity(currentElementIndex);
+        EntityBase* operator*() {
+            return currentTypeBag->second->entity(currentElementIndex);
         }
         iterator& operator++() {
             if (currentElementIndex < currentTypeBag->second->size() - 1) {
@@ -84,13 +81,13 @@ private:
 class Foo {
 public:
     virtual ~Foo() {}
-    virtual void update() const = 0;
+    virtual void update() = 0;
 };
 
 class Bar : public Foo {
 public:
     Bar(int i_, float f_) : i{i_}, f{f_} {}
-    virtual void update() const override {
+    virtual void update() override {
         std::cout << "Bar::update(): i = " << i << ", f = " << f << '\n';
     }
 
@@ -102,7 +99,7 @@ private:
 class Baz : public Foo {
 public:
     Baz(float f_) : f{f_} {}
-    virtual void update() const override { std::cout << "Baz::update(): f = " << f << '\n'; }
+    virtual void update() override { std::cout << "Baz::update(): f = " << f << '\n'; }
 
 private:
     float f;
@@ -117,7 +114,7 @@ int main() {
     entityBag.emplace<Baz>(2.0f);
     entityBag.emplace<Bar>(4, 6.0f);
     entityBag.emplace<Baz>(3.0f);
-    for (const auto& e : entityBag) {
-        e.update();
+    for (auto e : entityBag) {
+        e->update();
     }
 }
